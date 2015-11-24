@@ -207,16 +207,24 @@ angular.module('Spent', [])
 
 		drawPlot();
 		var slices = getSlices();
-		var visDiv = $('#spent-vis');
-		
-		// for (var key in slices) {
-		// 	$(slices[key]).click(function (data) {
-		// 		console.log(data[0	]);
-		// 		visDiv.data[0].labels = getClickData(key).labels;
-		// 		visDiv.data[0].values = getClickData(key).values;
-		// 		Plotly.redraw(visDiv);
-		// 	});
-		// }		
+		var visDiv = $('#spent-vis')[0];
+
+		Object.keys(slices).forEach(function (key) {
+			$(slices[key]).click(function (data) {
+				var labels = getClickData(key).labels;
+				var values = getClickData(key).values;
+				var text = values.map(function(amt) {
+					return '$' + amt;
+				});
+
+				visDiv.data[0].labels = labels;
+				visDiv.data[0].values = values;
+				visDiv.data[0].text = values;
+
+				console.log(labels)
+				Plotly.redraw(visDiv);
+			});
+		})	
 
 		function getPlotData() {
 			var data = {
@@ -292,25 +300,5 @@ angular.module('Spent', [])
 
 			return data;
 		}
-
-
-
-		var billsSlice = slices[0];
-		var billCats = ['Rent', 'Utilities'];
-		var billAmounts = ['727', '43'];
-		var billText = billAmounts.map(function (amt) {
-			return '$' + amt;
-		});
-
-		// var shoppingSlice = slices[2];
-		// var healthSlice = slices[3];
-		// var Services = slices[4];
-
-		$(billsSlice).click(function (data) {
-			visDiv.data[0].labels = billCats;
-			visDiv.data[0].values = billAmounts;
-		
-			Plotly.redraw(visDiv); 
-		});
 	});
 
