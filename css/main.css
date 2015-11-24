@@ -1,0 +1,44 @@
+@import url(https://fonts.googleapis.com/css?family=Raleway:200);
+
+body {
+	font-family: Raleway;	
+	background-color: #ecf0f1;
+}
+
+h1 {
+	
+	/*margin-bottom: 21px;*/
+}
+
+#title h1 {
+	font-family: Raleway;
+	font-size: 50px;	
+}
+
+#input {
+	margin-top: 20px;
+}
+
+.dropdown-menu {
+	width: 100%;
+}
+
+
+.btn-default, .btn-group {
+	width: 100%;
+}
+
+#spent-vis {
+	height: 500px;
+	width: 500px;
+	margin-right: auto;
+	margin-left: auto;
+}
+
+.jumbotron {
+	background: #FFF;
+	padding-top: 35px;
+	padding-bottom: 35px;
+}
+
+
