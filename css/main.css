@@ -33,8 +33,6 @@ input::-webkit-inner-spin-button {
 #spent-vis {
 	height: 450px;
 	width: 450px;
-	margin-right: auto;
-	margin-left: auto;
 }
 
 #canvas-div {

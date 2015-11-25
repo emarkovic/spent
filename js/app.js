@@ -1,10 +1,12 @@
 angular.module('Spent', [])
 	.controller('SpentController', function ($scope) {
+		//the names for the chart
 		$scope.categoryNames = ['Bills & Utilities', 'Food', 'Shopping', 'Health'];
 		$scope.billsSubCatNames = ['Rent', 'Utilities', 'Misc Bills'];
 		$scope.foodSubCatNames = ['Coffee', 'Restaurant', 'Groceries'];
 		$scope.shoppingSubCatNames = ['Clothing', 'Electronics', 'Books', 'Sporting Goods', 'Misc'];
 		$scope.healthSubCatNames = ['Dentist', 'Doctor', 'Eye Care', 'Gym', 'Pharmacy'];
+		//
 		$scope.subCategoryOptions = [];
 		$scope.index = 9;
 		$scope.transactions = {
@@ -211,14 +213,29 @@ angular.module('Spent', [])
 			}
 		};
 
+		//Since the chart is a canvas element, we must get the context in order to initialize 
+		//our chart.
 		$scope.ctx = $('#spent-vis').get(0).getContext("2d");			
+		//Initializes a new chart using the context we fetched
+		//chart.js provides some helper function for initializing the type of chart you might want
+		//Here I chose a Doughnut chart. This function takes two parameters which are the chart data 
+		//and chart options. The chart data must be an array of objects
 		$scope.chart = new Chart($scope.ctx).Doughnut(getCategoryData(), getOptions());
 		$scope.onSubCat = false;
 		$scope.showTransactions = false;
 
+		//Chart js supports click events. Attach a click event on the canvas element in which your 
+		//chart lives and pass in "event" to the callback function. 
+		//Chart js provides the chart.getSegmentsAtEvent(event) which returns an array. This pretty 
+		//much tells you what you just clicked on. If you did not click on any part of the chart
+		//but you did click on the canvas, this array will have a length of zero.
+		//To find the name of the chart segment that was clicked do:
+		//	chart.getSegmentsAtEvent(event)[0].label;
 		$('#spent-vis').click(function (event) {
 			var activePts = $scope.chart.getSegmentsAtEvent(event);
 			
+			//Here I am checking if any segment was clicked by checking if the 
+			//segment at event array is of length 0
 			if (activePts.length === 0 && $scope.onSubCat) { //nothing was clicked
 				$scope.onSubCat = false;
 				$scope.showTransactions = false;
@@ -240,6 +257,23 @@ angular.module('Spent', [])
 			}			
 		})
 
+		//This function is called to get the right data for the initialization of the chart.
+		//You must include the value of the segment you want and the label, key, color, along 
+		//with other options.
+		//Data is in this format
+		//	var data = [
+		//		{
+		//			value: value,
+		//			color: color,
+		//			label: label
+		//		},
+		//		{
+		//			value: value,
+		//			color: color,
+		//			label: label
+		//		}
+		//	]
+		//Each object in this array becomes a segment in the chart.
 		function getCategoryData() {
 			var data = [];
 			var colors = ['#B4D5E0', '#E0E9E4', '#8CBDC1', '#54A9A9', '#8D7071'];
@@ -283,6 +317,8 @@ angular.module('Spent', [])
 			return transForShow;
 		}
 
+		//These are the options required for initializing a chart. A complete list 
+		//is found here: http://www.chartjs.org/docs/#getting-started-global-chart-configuration.
 		function getOptions() {
 			return {
 			    //Boolean - Whether we should show a stroke on each segment
@@ -303,7 +339,7 @@ angular.module('Spent', [])
 			    animationSteps : 100,
 
 			    //String - Animation easing effect
-			    animationEasing : "easeOutBounce",
+			    animationEasing : "easeInOutCubic",
 
 			    //Boolean - Whether we animate the rotation of the Doughnut
 			    animateRotate : true,
@@ -317,14 +353,22 @@ angular.module('Spent', [])
 		}
 
 		function clearChart() {
+			//get the number of segments in the chart
 			var length = $scope.chart.segments.length;
-			for (var i = 0; i < length; i++) {
+			for (var i = 0; i < length; i++) {	
+				//You can clear the data in a chart by doing chart.removeData(index).
+				//This function removes one segment of data at a time. You can get all
+				//of the charts segments by doing chart.segments.length as I did above.
 				$scope.chart.removeData(0);
 			}
 		}
 
 		function redrawChart(data) {			
-			data.forEach(function (segmentData) {				
+			data.forEach(function (segmentData) {	
+				//You can add additional data to your chart by doing
+				//chart.addData(data).
+				//This adds one segment of data at a time so only pass it a single
+				//object.
 				$scope.chart.addData(segmentData);
 			});
 		}
