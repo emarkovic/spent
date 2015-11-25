@@ -5,10 +5,8 @@ angular.module('Spent', [])
 		$scope.foodSubCatNames = ['Coffee', 'Restaurant', 'Groceries'];
 		$scope.shoppingSubCatNames = ['Clothing', 'Electronics', 'Books', 'Sporting Goods', 'Misc'];
 		$scope.healthSubCatNames = ['Dentist', 'Doctor', 'Eye Care', 'Gym', 'Pharmacy'];
-
 		$scope.subCategoryOptions = [];
-
-		$scope.index = 0;
+		$scope.index = 9;
 		$scope.transactions = {
 			0 : {
 				amount: 727,
@@ -55,9 +53,7 @@ angular.module('Spent', [])
 				category: 'Health',
 				subCategory: 'Doctor'
 			}
-
 		};
-
 		$scope.categories = {
 			'Bills & Utilities' : {
 				total: 870,
@@ -174,19 +170,23 @@ angular.module('Spent', [])
 				subCategory: $scope.amtSubCategory
 			}
 
-			$scope.categories[$scope.amtCategory].total += $scope.amount;
+			$scope.categories[$scope.amtCategory].total += parseInt($scope.amount);
 			$scope.categories[$scope.amtCategory].transactions.push($scope.index);
 
-			$scope.subCategories[$scope.amtSubCategory].subTotal += $scope.amount;
+			$scope.subCategories[$scope.amtSubCategory].subTotal += parseInt($scope.amount);
 			$scope.subCategories[$scope.amtSubCategory].transactions.push($scope.index);
+			
+			$scope.amount = null;
+			$scope.amtCategory = null;
+			$scope.amtSubCategory = null;
 
-			$scope.index++;
+			$scope.index++;	
 
-			console.log($scope.transactions, $scope.categories, $scope.subCategories);
+			clearChart();
+			redrawChart(getCategoryData());
 		};
 
 		$scope.setSubCatOptions = function () {
-			console.log($scope.amtCategory);
 			switch ($scope.amtCategory) {
 				case 'Bills & Utilities':
 					$scope.subCategoryOptions = $scope.billsSubCatNames;
@@ -205,100 +205,119 @@ angular.module('Spent', [])
 			}
 		};
 
-		drawPlot();
-		var slices = getSlices();
-		var visDiv = $('#spent-vis')[0];
+		$scope.ctx = $('#spent-vis').get(0).getContext("2d");			
+		$scope.chart = new Chart($scope.ctx).Doughnut(getCategoryData(), getOptions());
+		$scope.onSubCat = false;
+		$scope.showTransactions = false;
 
-		Object.keys(slices).forEach(function (key) {
-			$(slices[key]).click(function (data) {
-				var labels = getClickData(key).labels;
-				var values = getClickData(key).values;
-				var text = values.map(function(amt) {
-					return '$' + amt;
+		$('#spent-vis').click(function (event) {
+			var activePts = $scope.chart.getSegmentsAtEvent(event);
+			
+			if (activePts.length === 0 && $scope.onSubCat) { //nothing was clicked
+				$scope.onSubCat = false;
+				$scope.showTransactions = false;
+				$scope.$apply();
+				clearChart();
+				redrawChart(getCategoryData());
+			} else if (activePts.length != 0 && $scope.onSubCat) { //a subcategory was clicked
+				$scope.showTransactions = true;				
+				$scope.transactionName = activePts[0].label;
+				$scope.transactionsForShow = getTransactions(activePts[0].label);
+				console.log($scope.transactionsForShow);
+				$scope.$apply();
+			} else if (activePts.length != 0 && !$scope.onSubCat) { //a category was clicked
+				$scope.onSubCat = true;
+				var selectedCategory = activePts[0].label;	
+				clearChart();
+				redrawChart(getSubCategoryData(selectedCategory));
+			}			
+		})
+
+		function getCategoryData() {
+			var data = [];
+			var colors = ['#B4D5E0', '#E0E9E4', '#8CBDC1', '#54A9A9', '#8D7071'];
+			var index = 0;
+			Object.keys($scope.categories).forEach(function (key) {
+				data.push({
+					value: $scope.categories[key].total,					
+					color: colors[index],
+					label: key
 				});
-
-				visDiv.data[0].labels = labels;
-				visDiv.data[0].values = values;
-				visDiv.data[0].text = values;
-
-				console.log(labels)
-				Plotly.redraw(visDiv);
+				index++;
 			});
-		})	
-
-		function getPlotData() {
-			var data = {
-				labels: [],
-				values: []
-			}
-			for (var key in $scope.categories) {
-				var total = $scope.categories[key].total;
-				if (total > 0) {
-					data.labels.push(key);
-					data.values.push(total);
-				}
-			}
 			return data;
 		}
 
-		function drawPlot() {
-			var visDiv = $('#spent-vis')[0],
-				labels = getPlotData().labels,
-				values = getPlotData().values,
-				text = values.map(function(amt) {
-					return '$' + amt;
-				}),
-				colors = ['#B4D5E0', '#E0E9E4', '#8CBDC1', '#54A9A9', '#8D7071'],
-
-				data = [
-					{	
-						type: 'pie',
-						labels: labels,
-						values: values,
-						text: text,
-						opacity: 0.75,
-						hole: 0.4,
-						hoverinfo: 'label',
-						textinfo: 'text',
-						showlegend: false,
-						marker : {
-							colors: colors			
-						}
-					}
-				],
-				layout = {
-					title: 'Spent by Categories',
-					height: 500,
-					width: 500
-				};
-			Plotly.newPlot(visDiv, data, layout);
-		}
-
-		function getSlices() {
-			var chart = $('.slice');
-			var slices = {};
-			var infoLabels = getPlotData().labels;
-			for (var i = 0; i < infoLabels.length; i++) {
-				slices[infoLabels[i]] = chart[i];
-			}
-			return slices;
-		}
-
-		function getClickData(key) {
-			var data = {
-				labels: [],
-				values: []
-			}
-			var subCats = $scope.categories[key].subCategories;
-			subCats.forEach(function (subCat) {
-				var subTotal = $scope.subCategories[subCat].subTotal;
-				if (subTotal > 0) {
-					data.labels.push(subCat);
-					data.values.push(subTotal);
-				}
+		function getSubCategoryData(category) {
+			var data = [];
+			var colors = ['#B4D5E0', '#E0E9E4', '#8CBDC1', '#54A9A9', '#8D7071'];
+			var index = 0;
+			var subCategories = $scope.categories[category].subCategories;
+			subCategories.forEach(function (subCat) {
+				data.push({
+					value: $scope.subCategories[subCat].subTotal,
+					color: colors[index],
+					label: subCat
+				});
+				index++;
 			});
-
 			return data;
+		}
+
+		function getTransactions(subCategory) {
+			var transForShow = [];
+			var trans = $scope.subCategories[subCategory].transactions;
+			trans.forEach(function (index) {
+				transForShow.push($scope.transactions[index]);
+			});
+			console.log(transForShow);
+			return transForShow;
+		}
+
+		function getOptions() {
+			return {
+			    //Boolean - Whether we should show a stroke on each segment
+			    segmentShowStroke : true,
+
+			    scaleShowLabels: true,
+
+			    //String - The colour of each segment stroke
+			    segmentStrokeColor : "#fff",
+
+			    //Number - The width of each segment stroke
+			    segmentStrokeWidth : 2,
+
+			    //Number - The percentage of the chart that we cut out of the middle
+			    percentageInnerCutout : 40, // This is 0 for Pie charts
+
+			    //Number - Amount of animation steps
+			    animationSteps : 100,
+
+			    //String - Animation easing effect
+			    animationEasing : "easeOutBounce",
+
+			    //Boolean - Whether we animate the rotation of the Doughnut
+			    animateRotate : true,
+
+			    //Boolean - Whether we animate scaling the Doughnut from the centre
+			    animateScale : false,
+
+			    //String - A legend template
+			    legendTemplate : "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<segments.length; i++){%><li><span style=\"background-color:<%=segments[i].fillColor%>\"></span><%if(segments[i].label){%><%=segments[i].label%><%}%></li><%}%></ul>"
+			}	
+		}
+
+		function clearChart() {
+			var length = $scope.chart.segments.length;
+			for (var i = 0; i < length; i++) {
+				$scope.chart.removeData(0);
+			}
+		}
+
+		function redrawChart(data) {			
+			data.forEach(function (segmentData) {				
+				$scope.chart.addData(segmentData);
+			});
 		}
 	});
 

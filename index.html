@@ -33,6 +33,7 @@
 									class="form-control" 					
 									placeholder="$$$"
 									ng-model="amount"
+									required
 								>
 							</div>							
 						</div>
@@ -45,6 +46,7 @@
 									ng-options="category for category in categoryNames"
 									ng-model="amtCategory"
 									ng-change="setSubCatOptions()"
+									required
 								>
 								</select>					
 							</div>
@@ -57,6 +59,7 @@
 									class="form-control"
 									ng-options="subCategory for subCategory in subCategoryOptions"
 									ng-model="amtSubCategory"
+									requred
 								></select>
 							</div>
 						</div>
@@ -80,11 +83,26 @@
 
 		<section id="overview"> 
 			<div class="container">
-				<div id="spent-vis"></div>	
+				<div id="canvas-div">
+					<canvas id="spent-vis"></canvas>
+				</div>
+			</div>
+		</section>
+
+		<section id="transactions" ng-show="showTransactions">
+			<div class="container">
+				<div class="jumbotron">
+					<p>Transactions for {{transactionName}}</p>
+
+					<div class="transaction" ng-repeat="transaction in transactionsForShow">
+						<p><STRONG>{{transaction.amount | currency}}</STRONG></p>
+					</div>
+				</div>
 			</div>
 		</section>
 		
-		<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/randomcolor/0.4.1/randomColor.min.js"></script>
 		<script src="js/app.js"></script>
 	</body>
 </html>
