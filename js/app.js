@@ -8,162 +8,10 @@ angular.module('Spent', [])
 		$scope.healthSubCatNames = ['Dentist', 'Doctor', 'Eye Care', 'Gym', 'Pharmacy'];
 		//
 		$scope.subCategoryOptions = [];
-		$scope.index = 9;
-		$scope.transactions = {
-			0 : {
-				amount: 727,
-				category: 'Bills & Utilities',
-				subCategory: 'Rent'
-			},
-			1 : {
-				amount: 43,
-				category: 'Bills & Utilities',
-				subCategory: 'Utilities'
-			},
-			2 : {
-				amount: 100,
-				category: 'Bills & Utilities',
-				subCategory: 'Misc Bills'
-			},
-			3 : {
-				amount: 10,
-				category: 'Food',
-				subCategory: 'Restaurant'
-			},
-			4 : {
-				amount: 20,
-				category: 'Food',
-				subCategory: 'Restaurant'
-			},
-			5 : {
-				amount: 4,
-				category: 'Food',
-				subCategory: 'Coffee'
-			},
-			6 :{
-				amount: 35,
-				category: 'Food',
-				subCategory: 'Groceries'
-			},
-			7 : {
-				amount: 40,
-				category: 'Shopping',
-				subCategory: 'Electronics'
-			},
-			8 : {
-				amount: 50,
-				category: 'Health',
-				subCategory: 'Doctor'
-			}
-		};
-		$scope.categories = {
-			'Bills & Utilities' : {
-				total: 870,
-				transactions : [0, 1, 2],
-				subCategories : ['Rent', 'Utilities', 'Misc Bills']
-			},
-			'Food' : {
-				total: 69,
-				transactions: [3, 4, 5, 6],
-				subCategories: ['Coffee', 'Restaurant', 'Groceries']
-			},
-			'Shopping' : {
-				total: 40,
-				transactions: [7],
-				subCategories: ['Clothing', 'Electronics', 'Books', 'Sporting Goods', 'Misc']
-			},
-			'Health' : {
-				total: 50,
-				transactions: [8],
-				subCategories: ['Dentist', 'Doctor', 'Eye Care', 'Gym', 'Pharmacy']
-			},
-		};
-
-		$scope.subCategories = {
-			'Rent' : {
-				subTotal: 727,
-				transactions : [0],
-				categories : ['Bills & Utilities']
-			},
-			'Utilities' : {
-				subTotal: 43,
-				transactions : [1],
-				categories : ['Bills & Utilities']
-			},
-			'Misc Bills' : {
-				subTotal: 100,
-				transactions : [2],
-				categories : ['Bills & Utilities']
-			},
-
-			'Coffee' : {
-				subTotal: 4,
-				transactions : [5],
-				categories : ['Food']
-			},
-			'Restaurant' : {
-				subTotal: 30,
-				transactions : [3, 4],
-				categories : ['Food']
-			},
-			'Groceries' : {
-				subTotal: 35,
-				transactions : [6],
-				categories : ['Food']
-			},
-
-			'Clothing' : {
-				subTotal: 0,
-				transactions : [],
-				categories : ['Shopping']
-			},
-			'Electronics' : {
-				subTotal: 40,
-				transactions : [7],
-				categories : ['Shopping']
-			},
-			'Books' : {
-				subTotal: 0,
-				transactions : [],
-				categories : ['Shopping']
-			},
-			'Sporting Goods' : {
-				subTotal: 0,
-				transactions : [],
-				categories : ['Shopping']
-			},
-			'Misc' : {
-				subTotal: 0,
-				transactions : [],
-				categories : ['Shopping']
-			},
-
-			'Dentist' : {
-				subTotal: 0,
-				transactions : [],
-				categories : ['Health']
-			},
-			'Doctor' : {
-				subTotal: 50,
-				transactions : [8],
-				categories : ['Health']
-			},
-			'Eye Care' : {
-				subTotal: 0,
-				transactions : [],
-				categories : ['Health']
-			},
-			'Gym' : {
-				subTotal: 0,
-				transactions : [],
-				categories : ['Health']
-			},
-			'Pharmacy' : {
-				subTotal: 0,
-				transactions : [],
-				categories : ['Health']
-			}
-		}
+		$scope.index = localStorage.getItem('index') || 9;
+		$scope.transactions = JSON.parse(localStorage.getItem('transactions')) || getTransactions();
+		$scope.categories = JSON.parse(localStorage.getItem('categories')) || getCategories();
+		$scope.subCategories = JSON.parse(localStorage.getItem('subCategories')) || getSubCategories();
 
 		$scope.addTransaction = function () {
 			$scope.showTransactions = false;
@@ -180,8 +28,8 @@ angular.module('Spent', [])
 			$scope.categories[$scope.amtCategory].transactions.push($scope.index);
 
 			$scope.subCategories[$scope.amtSubCategory].subTotal += parseInt($scope.amount);
-			$scope.subCategories[$scope.amtSubCategory].transactions.push($scope.index);
-			
+			$scope.subCategories[$scope.amtSubCategory].transactions.push($scope.index);						
+
 			$scope.amount = null;
 			$scope.amtCategory = null;
 			$scope.amtSubCategory = null;
@@ -189,6 +37,8 @@ angular.module('Spent', [])
 			$scope.amtDescription = null;
 
 			$scope.index++;	
+
+			save();
 
 			clearChart();
 			redrawChart(getCategoryData());
@@ -244,10 +94,8 @@ angular.module('Spent', [])
 				redrawChart(getCategoryData());
 			} else if (activePts.length != 0 && $scope.onSubCat) { //a subcategory was clicked
 				$scope.showTransactions = true;				
-				$scope.transactionName = activePts[0].label;
-				console.log(activePts[0].label)
-				$scope.transactionsForShow = getTransactions(activePts[0].label);
-				console.log($scope.transactionsForShow);
+				$scope.transactionName = activePts[0].label;				
+				$scope.transactionsForShow = getTransactionsData(activePts[0].label);				
 				$scope.$apply();
 			} else if (activePts.length != 0 && !$scope.onSubCat) { //a category was clicked
 				$scope.onSubCat = true;
@@ -305,15 +153,12 @@ angular.module('Spent', [])
 			return data;
 		}
 
-		function getTransactions(subCategory) {
+		function getTransactionsData(subCategory) {
 			var transForShow = [];
-			console.log($scope.subCategories[subCategory]);
 			var trans = $scope.subCategories[subCategory].transactions;
-
 			trans.forEach(function (index) {
 				transForShow.push($scope.transactions[index]);
 			});
-			console.log(transForShow);
 			return transForShow;
 		}
 
@@ -371,6 +216,176 @@ angular.module('Spent', [])
 				//object.
 				$scope.chart.addData(segmentData);
 			});
+		}
+
+		function save() {
+			localStorage.setItem('transactions', JSON.stringify($scope.transactions));
+			localStorage.setItem('categories', JSON.stringify($scope.categories));
+			localStorage.setItem('subCategories', JSON.stringify($scope.subCategories));
+			localStorage.setItem('index', JSON.stringify($scope.index));
+		}
+
+		function getTransactions() {
+			return {
+				0 : {
+					amount: 727,
+					category: 'Bills & Utilities',
+					subCategory: 'Rent'
+				},
+				1 : {
+					amount: 43,
+					category: 'Bills & Utilities',
+					subCategory: 'Utilities'
+				},
+				2 : {
+					amount: 100,
+					category: 'Bills & Utilities',
+					subCategory: 'Misc Bills'
+				},
+				3 : {
+					amount: 10,
+					category: 'Food',
+					subCategory: 'Restaurant'
+				},
+				4 : {
+					amount: 20,
+					category: 'Food',
+					subCategory: 'Restaurant'
+				},
+				5 : {
+					amount: 4,
+					category: 'Food',
+					subCategory: 'Coffee'
+				},
+				6 :{
+					amount: 35,
+					category: 'Food',
+					subCategory: 'Groceries'
+				},
+				7 : {
+					amount: 40,
+					category: 'Shopping',
+					subCategory: 'Electronics'
+				},
+				8 : {
+					amount: 50,
+					category: 'Health',
+					subCategory: 'Doctor'
+				}
+			};
+		}
+
+		function getCategories() {
+			return {
+				'Bills & Utilities' : {
+					total: 870,
+					transactions : [0, 1, 2],
+					subCategories : ['Rent', 'Utilities', 'Misc Bills']
+				},
+				'Food' : {
+					total: 69,
+					transactions: [3, 4, 5, 6],
+					subCategories: ['Coffee', 'Restaurant', 'Groceries']
+				},
+				'Shopping' : {
+					total: 40,
+					transactions: [7],
+					subCategories: ['Clothing', 'Electronics', 'Books', 'Sporting Goods', 'Misc']
+				},
+				'Health' : {
+					total: 50,
+					transactions: [8],
+					subCategories: ['Dentist', 'Doctor', 'Eye Care', 'Gym', 'Pharmacy']
+				},
+			};
+		}
+
+		function getSubCategories() {
+			return {
+				'Rent' : {
+					subTotal: 727,
+					transactions : [0],
+					categories : ['Bills & Utilities']
+				},
+				'Utilities' : {
+					subTotal: 43,
+					transactions : [1],
+					categories : ['Bills & Utilities']
+				},
+				'Misc Bills' : {
+					subTotal: 100,
+					transactions : [2],
+					categories : ['Bills & Utilities']
+				},
+
+				'Coffee' : {
+					subTotal: 4,
+					transactions : [5],
+					categories : ['Food']
+				},
+				'Restaurant' : {
+					subTotal: 30,
+					transactions : [3, 4],
+					categories : ['Food']
+				},
+				'Groceries' : {
+					subTotal: 35,
+					transactions : [6],
+					categories : ['Food']
+				},
+
+				'Clothing' : {
+					subTotal: 0,
+					transactions : [],
+					categories : ['Shopping']
+				},
+				'Electronics' : {
+					subTotal: 40,
+					transactions : [7],
+					categories : ['Shopping']
+				},
+				'Books' : {
+					subTotal: 0,
+					transactions : [],
+					categories : ['Shopping']
+				},
+				'Sporting Goods' : {
+					subTotal: 0,
+					transactions : [],
+					categories : ['Shopping']
+				},
+				'Misc' : {
+					subTotal: 0,
+					transactions : [],
+					categories : ['Shopping']
+				},
+
+				'Dentist' : {
+					subTotal: 0,
+					transactions : [],
+					categories : ['Health']
+				},
+				'Doctor' : {
+					subTotal: 50,
+					transactions : [8],
+					categories : ['Health']
+				},
+				'Eye Care' : {
+					subTotal: 0,
+					transactions : [],
+					categories : ['Health']
+				},
+				'Gym' : {
+					subTotal: 0,
+					transactions : [],
+					categories : ['Health']
+				},
+				'Pharmacy' : {
+					subTotal: 0,
+					transactions : [],
+					categories : ['Health']
+				}
+			};
 		}
 	});
 
