@@ -5,9 +5,11 @@ body {
 	background-color: #ecf0f1;
 }
 
-h1 {
-	
-	/*margin-bottom: 21px;*/
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    /* display: none; <- Crashes Chrome on hover */
+    -webkit-appearance: none;
+    margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
 }
 
 #title h1 {

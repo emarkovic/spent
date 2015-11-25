@@ -164,10 +164,14 @@ angular.module('Spent', [])
 		}
 
 		$scope.addTransaction = function () {
+			$scope.showTransactions = false;
+			$scope.onSubCat = false;
 			$scope.transactions[$scope.index] = {
 				amount: $scope.amount,
 				category: $scope.amtCategory,
-				subCategory: $scope.amtSubCategory
+				subCategory: $scope.amtSubCategory,
+				location: $scope.amtLocation,
+				description: $scope.amtDescription
 			}
 
 			$scope.categories[$scope.amtCategory].total += parseInt($scope.amount);
@@ -179,6 +183,8 @@ angular.module('Spent', [])
 			$scope.amount = null;
 			$scope.amtCategory = null;
 			$scope.amtSubCategory = null;
+			$scope.amtLocation = null;
+			$scope.amtDescription = null;
 
 			$scope.index++;	
 
@@ -222,6 +228,7 @@ angular.module('Spent', [])
 			} else if (activePts.length != 0 && $scope.onSubCat) { //a subcategory was clicked
 				$scope.showTransactions = true;				
 				$scope.transactionName = activePts[0].label;
+				console.log(activePts[0].label)
 				$scope.transactionsForShow = getTransactions(activePts[0].label);
 				console.log($scope.transactionsForShow);
 				$scope.$apply();
@@ -266,7 +273,9 @@ angular.module('Spent', [])
 
 		function getTransactions(subCategory) {
 			var transForShow = [];
+			console.log($scope.subCategories[subCategory]);
 			var trans = $scope.subCategories[subCategory].transactions;
+
 			trans.forEach(function (index) {
 				transForShow.push($scope.transactions[index]);
 			});
