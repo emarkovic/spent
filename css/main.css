@@ -31,13 +31,13 @@ input::-webkit-inner-spin-button {
 }
 
 #spent-vis {
-	height: 450px;
-	width: 450px;
+	height: 500px;
+	width: 500px;
 }
 
 #canvas-div {
-	height: 450px;
-	width: 450px;
+	height: 500px;
+	width: 500px;
 	margin-right: auto;
 	margin-left: auto;
 }

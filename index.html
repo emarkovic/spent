@@ -22,107 +22,115 @@
 		
 		<section id="input">
 			<div class="container">
-				<div class="jumbotron">
-					<form 
-						name="amountForm"
-						novalidate
-					>
-						<div class="row">
-							<div class="col-sm-4">
-								<div class="form-group">
-									<label for="amount-inp">Amount spent:</label>
-									<input 
-										type="number" 
-										id="amount-inp"
-										class="form-control" 					
-										placeholder="$$$"
-										ng-model="amount"
-										required
-										pattern="\d+(\.\d{1,2})?"
+				<div class="row">
+					<div class="col-sm-4">
+						<div class="jumbotron">
+							<form 
+								name="amountForm"
+								novalidate
+							>
+								<div class="row">
+									
+									<div class="form-group">
+										<label for="amount-inp">Amount spent:</label>
+										<input 
+											type="number" 
+											id="amount-inp"
+											class="form-control" 					
+											placeholder="$$$"
+											ng-model="amount"
+											required
+											pattern="\d+(\.\d{1,2})?"
+										>
+									</div>							
+									
+								</div>
+								<div class="row">
+									
+										<div class="form-group">
+											<label for="category-inp">Category:</label>
+											<select 
+												id="category-inp"
+												class="form-control"
+												ng-options="category for category in categoryNames"
+												ng-model="amtCategory"
+												ng-change="setSubCatOptions()"
+												required
+											>
+											</select>					
+										</div>
+									
+								</div>
+								<div class="row">
+									<div class="form-group">
+										<label for="subCategoy-inp">Sub-Category:</label>
+										<select 
+											id="subCategory-inp"
+											class="form-control"
+											ng-options="subCategory for subCategory in subCategoryOptions"
+											ng-model="amtSubCategory"
+											requred
+										></select>
+									</div>
+								</div>
+								
+								
+								<div class="row">
+									<div class="form-group">
+										<label for="location-inp">Location:</label>
+										<input 
+											type="text"
+											id="location-inp"
+											class="form-control"
+											ng-model="amtLocation"
+											placeholder="Ex. Starbucks"
+										>
+									</div>
+								</div>
+
+								<div class="row">
+									<div class="form-group">
+										<label for="description-inp">Description:</label>
+										<textarea 
+											class="form-control" 
+											id="description-inp" 
+											cols="30" 										
+											rows="1"
+											ng-model="amtDescription"
+											placeholder="Jill's birthday present"
+										></textarea>
+									</div>
+								</div>
+								
+								<div class="row">
+									<button 
+										type="submit" 
+										class="btn btn-default"
+										ng-disabled="amountForm.$invalid"
+										ng-click="addTransaction()"
 									>
-								</div>							
-							</div>
-							<div class="col-sm-4">
-								<div class="form-group">
-									<label for="category-inp">Category:</label>
-									<select 
-										id="category-inp"
-										class="form-control"
-										ng-options="category for category in categoryNames"
-										ng-model="amtCategory"
-										ng-change="setSubCatOptions()"
-										required
-									>
-									</select>					
+										Add
+									</button>		
 								</div>
-							</div>
-							<div class="col-sm-4">
-								<div class="form-group">
-									<label for="subCategoy-inp">Sub-Category:</label>
-									<select 
-										id="subCategory-inp"
-										class="form-control"
-										ng-options="subCategory for subCategory in subCategoryOptions"
-										ng-model="amtSubCategory"
-										requred
-									></select>
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-sm-4">
-								<div class="form-group">
-									<label for="location-inp">Location:</label>
-									<input 
-										type="text"
-										id="location-inp"
-										class="form-control"
-										ng-model="amtLocation"
-										placeholder="Ex. Starbucks"
-									>
-								</div>
-							</div>
-							<div class="col-sm-8">
-								<div class="form-group">
-									<label for="description-inp">Description:</label>
-									<textarea 
-										class="form-control" 
-										id="description-inp" 
-										cols="30" 										
-										rows="1"
-										ng-model="amtDescription"
-										placeholder="Jill's birthday present"
-									></textarea>
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-sm-4"></div>
-							<div class="col-sm-4">
-								<button 
-									type="submit" 
-									class="btn btn-default"
-									ng-disabled="amountForm.$invalid"
-									ng-click="addTransaction()"
-								>
-									Add
-								</button>		
-							</div>
-							<div class="col-sm-4"></div>
-						</div>
-					</form>
+							</form>
+						</div>						
+					</div>
+					<div class="col-sm-8">
+						<div id="canvas-div">
+							<canvas id="spent-vis"></canvas>
+						</div>						
+					</div>
 				</div>
+				
 			</div>
 		</section>
 
-		<section id="overview"> 
+<!-- 		<section id="overview"> 
 			<div class="container">
-				<div id="canvas-div">
-					<canvas id="spent-vis"></canvas>
-				</div>
+				
 			</div>
 		</section>
-
+ -->
 		<section id="transactions" ng-show="showTransactions">
 			<div class="container">
 				<div class="jumbotron">
