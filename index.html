@@ -8,9 +8,9 @@
 		<link rel="stylesheet" href="css/main.css">
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.0-beta.2/angular.min.js"></script>
 		<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-		<script src="https://cdn.firebase.com/js/client/2.2.4/firebase.js"></script>
-		<!-- AngularFire -->
-		<script src="https://cdn.firebase.com/libs/angularfire/1.1.3/angularfire.min.js"></script>
+		<!-- <script src="https://cdn.firebase.com/js/client/2.2.4/firebase.js"></script>
+		AngularFire
+		<script src="https://cdn.firebase.com/libs/angularfire/1.1.3/angularfire.min.js"></script> -->
 		
 	</head>
 	<body ng-app="Spent" ng-controller="SpentController" ng-cloak>
@@ -131,10 +131,10 @@
 			</div>
 		</section>
  -->
-		<section id="transactions" ng-show="showTransactions">
+		<section id="transactions">
 			<div class="container">
 				<div class="jumbotron">
-					<p>Transactions for {{transactionName}}</p>
+					<p>Transactions <span ng-if="transactionName">for {{transactionName}}</span></p>
 
 					<div class="transaction" ng-repeat="transaction in transactionsForShow">
 						<p>
