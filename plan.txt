@@ -1,0 +1,14 @@
+- set up firebase
+- add user login 
+- track budgets
+	- budgets would be per specified amount of time
+	- how to add/modify budgets?
+		make a separate form/view for adding or editing budget?
+		or add a model for adding or modifying a budget.
+		-> model for adding a budget.
+		-> model for editing the settings.
+		where should the ability to delete a budget be?
+			- if a budget gets added to an item then deleting a budget would mean 
+			  removing all the occurrences of that budget in the items
+		
+
