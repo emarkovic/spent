@@ -1,4 +1,4 @@
-angular.module('Spent', [])
+	angular.module('Spent', [])
 	.service('dataService', function () {
 		this.getBillSubCategories = function () {
 			return ['Rent', 'Utilities', 'Misc Bills'];
@@ -199,7 +199,7 @@ angular.module('Spent', [])
 				subCategory: $scope.amtSubCategory,
 				location: $scope.amtLocation,
 				description: $scope.amtDescription
-			}
+			};
 
 			categories[$scope.amtCategory].total += parseInt($scope.amount);
 			categories[$scope.amtCategory].transactions.push($scope.index);
@@ -378,7 +378,7 @@ angular.module('Spent', [])
 
 			    //Boolean - Whether we animate scaling the Doughnut from the centre
 			    animateScale : false
-			}
+			};
 		}
 
 		function clearChart() {
