@@ -2,7 +2,7 @@
 
 body {
 	font-family: Raleway;	
-	background-color: #ecf0f1;
+	background-color: #fcfcfc;
 }
 
 input::-webkit-outer-spin-button,
@@ -12,11 +12,8 @@ input::-webkit-inner-spin-button {
     margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
 }
 
-#title h1 {
-	font-family: Raleway;
-	font-size: 50px;	
-}
 
+/*
 #input {
 	margin-top: 20px;
 }
@@ -56,4 +53,70 @@ input::-webkit-inner-spin-button {
 .transaction p {
 	padding-left: 5px;
 	font-size: 18px;
+}*/
+
+
+
+/*.hr {
+	border-color: #eeeeee;
+}*/
+.chart-container {
+	width: 400px;
+	height:400px;
+}
+
+.btn {
+	font-family: Raleway;	
+}
+
+.nav-pills>li.active>a, .nav-pills>li.active>a:hover, .nav-pills>li.active>a:focus {
+	background-color: #FFF;
+}
+
+
+#title {
+	background-color: #DDD;
+}
+
+#title h1 {
+	font-family: Raleway;
+	font-size: 50px;	
+	margin-bottom: 30px;
+}
+
+#greetUser {
+	padding-top: 11px;
+	padding-bottom: 11px;
+	padding-left: 15px;
+	padding-right: 15px;
+}
+
+.container {
+	margin-top: 40px;
+}
+
+#nav {
+	margin-top: 30px;
+	font-size: 18px;
+}
+
+#nav a {
+	color: rgb(68, 68, 68);
+}
+
+section p {
+	font-size: 20px;
+}
+
+button {
+	color: #FFF;
+	float: right;
+}
+
+.add2 {
+	width: 100%;
+}
+
+a {
+	color: #DDD;
 }

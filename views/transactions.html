@@ -1,0 +1,213 @@
+<header id="title">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-6">
+				<h1>spent</h1>	
+			</div>
+			<div class="col-md-6">
+				<ul class="nav nav-pills nav-justified" id="nav">
+					<li role="presentation"><a href="" ui-sref="main.overview()">overview</a></li>
+					
+					<li role="presentation"><a href="" ui-sref="main.budgets()">budgets</a></li>
+					<li role="presentation" class="active"><a href="" ui-sref="main.transactions()">transactions</a></li>
+				</ul>
+			</div>							
+		</div>
+	</div>
+</header>
+
+<section>
+	<div class="container">
+		<p id="date">
+			<a href=""><i class="fa fa-angle-left"></i></a>
+			{{date | date:'MMMM' | lowercase}}
+			<a href=""><i class="fa fa-angle-right"></i></a>
+		</p>		
+	</div>	
+</section>
+
+<section>
+	<div class="container">
+		<div class="row">
+			<div class="col-md-6">
+				<p>{{displayName}}</p>				
+			</div>
+			<div class="col-md-6">
+				<!-- btn for modal -->
+				<button 					
+					type="button" 
+					class="btn"
+					data-toggle="modal"
+					data-target="#addTrans"
+				>
+					<i class="fa fa-plus-square-o"></i> 
+					add a transaction
+				</button>
+
+				<!-- modal -->
+				<div 
+					class="modal fade" 
+					id="addTrans" 
+					tabindex="-1"
+					role="dialog"
+					aria-labelledby="modalTitle"
+				>
+					<div class="modal-dialog" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+								<h4 class="modal-title" id="modalTitle">add a transaction</h4>
+							</div> <!-- modal-header -->
+							<div class="modal-body">
+								
+								<form 
+									name="newTransForm"
+									novalidate
+								>
+									<div class="row">
+										<div class="col-md-12">
+											<div class="form-group">
+												<label for="amount-inp">amount spent:</label>
+												<input 
+													type="number" 
+													id="amount-inp"
+													class="form-control" 					
+													placeholder="$$$"
+													ng-model="amount"
+													required
+													pattern="\d+(\.\d{1,2})?"
+												>
+											</div>	
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-md-12">
+											<div class="form-group">
+												<label for="datetimepicker2">date:</label>														
+								                <input 
+								                	type='text' 
+								                	class="form-control" 
+								                	id="datetimepicker2"
+								                	ng-model="transDate"
+								                	placeholder="12/27/2015 12:00 AM"
+								                	required
+								                >
+								            </div>								            
+								        </div>
+								        <script type="text/javascript">
+								            $(function () {
+								                $('#datetimepicker2').datetimepicker({
+								                	showTodayButton: true
+								                });
+								            });
+								        </script>
+								    </div>  
+									<div class="row">
+											<div class="col-md-12">
+												<div class="form-group">
+												<label for="category-inp">category:</label>
+												<select 
+													id="category-inp"
+													class="form-control"
+													ng-options="category for category in categoryNames"
+													ng-model="category"
+													ng-change="setSubCatOptions()"
+													required
+												>
+												</select>				
+											</div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-md-12">
+											<div class="form-group">
+												<label for="subCategoy-inp">sub-category:</label>
+												<select 
+													id="subCategory-inp"
+													class="form-control"
+													ng-options="subCategory for subCategory in subCategoryOptions"
+													ng-model="subcategory"
+													requred
+												></select>
+											</div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-md-12">
+											<div class="form-group">
+												<label for="location-inp">location:</label>
+												<input 
+													type="text"
+													id="location-inp"
+													class="form-control"
+													ng-model="location"
+													placeholder="Ex. Starbucks"
+												>
+											</div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-md-12">
+											<div class="form-group">
+												<label for="description-inp">description:</label>
+												<textarea 
+													class="form-control" 
+													id="description-inp" 
+													cols="30" 										
+													rows="1"
+													ng-model="description"
+													placeholder="Jill's birthday present"
+												></textarea>
+											</div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-md-12">
+											<button 
+												type="submit" 
+												class="btn btn-default add2"
+												ng-disabled="newTransForm.$invalid"
+												ng-click="addTransaction()"
+											>
+												add
+											</button>	
+										</div>	
+									</div>
+								</form>
+
+							</div> <!-- modal-body -->
+						</div> <!-- modal-content -->
+					</div> <!-- modal-dialog -->
+				</div> <!-- modal -->
+			</div>
+		</div>
+	</div>
+</section>
+
+<section>
+	<div class="container">
+		<div class="row">
+			<div class="col-md-6">
+				<table class="table">
+					<tr>
+						<td>amount</td>
+						<td>location</td>
+						<td>description</td>
+					</tr>
+					<tr ng-repeat="transaction in transactions">
+						
+					</tr>
+				</table>
+			</div>
+			<div class="col-md-6">
+				<canvas
+					id="doughnut"
+					class="chart chart-doughnut"
+					chart-data="data"
+					chart-labels="labels"
+					height="400"
+				></canvas>
+			</div>
+		</div>
+	</div>
+</section>
